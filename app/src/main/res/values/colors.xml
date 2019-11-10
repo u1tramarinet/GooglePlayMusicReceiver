@@ -16,4 +16,6 @@
 
     <color name="green_200">#A5D6A7</color>
     <color name="green_900">#1B5E20</color>
+    <color name="deep_purple_200">#B39DDB</color>
+    <color name="deep_purple_900">#311B92</color>
 </resources>

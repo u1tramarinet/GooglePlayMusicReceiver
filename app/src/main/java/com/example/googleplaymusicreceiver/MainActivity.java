@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private MaterialButton addTrackButton;
     private MaterialButton addArtistButton;
     private MaterialButton addAlbumButton;
+    private MaterialButton addHyphenButton;
+    private MaterialButton addSlashButton;
+    private MaterialButton addBracketButton;
     private MaterialButton copyButton;
     private MaterialButton tweetButton;
     private final String format = "#NowPlaying %s - %s";
@@ -55,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         addTrackButton = findViewById(R.id.addTrackButton);
         addArtistButton = findViewById(R.id.addArtistButton);
         addAlbumButton = findViewById(R.id.addAlbumButton);
+        addHyphenButton = findViewById(R.id.addHyphenButton);
+        addSlashButton = findViewById(R.id.addSlashButton);
+        addBracketButton = findViewById(R.id.addBracketButton);
         copyButton = findViewById(R.id.copyButton);
         tweetButton = findViewById(R.id.tweetButton);
 
@@ -98,6 +104,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 insertTextIfFocused(textViewAlbum.getText().toString());
+            }
+        });
+
+        addHyphenButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertTextIfFocused(" - ");
+            }
+        });
+
+        addSlashButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertTextIfFocused(" / ");
+            }
+        });
+
+        addBracketButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertTextIfFocused("()");
+                int pos = Math.max(editText.getSelectionStart(), 0);
+                if (pos != 0) {
+                    editText.setSelection(pos - 1);
+                }
             }
         });
     }
@@ -158,12 +189,11 @@ public class MainActivity extends AppCompatActivity {
         if (!editText.isFocused()) {
             return;
         }
-        Editable editable = editText.getText();
-        String str = editable.toString();
-        int posStart = editText.getSelectionStart();
-        int posEnd = editText.getSelectionEnd();
-        String str1 = str.substring(0, posStart);
-        String str2 = str.substring(posEnd);
+        String str = editText.getText().toString();
+        int start = Math.max(editText.getSelectionStart(), 0);
+        int end = Math.max(editText.getSelectionEnd(), 0);
+        String str1 = str.substring(0, start);
+        String str2 = str.substring(end);
 
         str = str1 + text + str2;
         editText.setText(str);
