@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/googleYellow</color>
+    <color name="colorPrimaryDark">@color/googleRed</color>
+    <color name="colorAccent">@color/googleBlue</color>
+
+    <color name="googleBlue">#4285f4</color>
+    <color name="googleGreen">#0f9d58</color>
+    <color name="googleYellow">#f4b400</color>
+    <color name="googleRed">#db4437</color>
+
+    <color name="tw__blue_default">#FF5BAAF4</color>
+    <color name="tw__blue_pressed">#FF4186C8</color>
+    <color name="twitterSecondaryDarkGray">#657786</color>
+    <color name="twitterSecondaryLightGray">#AAB8C2</color>
+
+    <color name="green_200">#A5D6A7</color>
+    <color name="green_900">#1B5E20</color>
+</resources>

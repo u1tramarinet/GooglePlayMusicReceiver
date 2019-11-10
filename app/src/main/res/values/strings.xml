@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">GooglePlayMusicReceiver</string>
+
+    <string name="title_id">id</string>
+    <string name="title_track">track</string>
+    <string name="title_artist">artist</string>
+    <string name="title_album">album</string>
+</resources>
