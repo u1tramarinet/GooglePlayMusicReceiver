@@ -2,45 +2,24 @@ package com.example.googleplaymusicreceiver;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.button.MaterialButton;
-
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textViewId;
-    private TextView textViewTrack;
-    private TextView textViewArtist;
-    private TextView textViewAlbum;
-    private EditText editText;
-    private MaterialButton addIdButton;
-    private MaterialButton addTrackButton;
-    private MaterialButton addArtistButton;
-    private MaterialButton addAlbumButton;
-    private MaterialButton addHyphenButton;
-    private MaterialButton addSlashButton;
-    private MaterialButton addBracketButton;
-    private MaterialButton copyButton;
-    private MaterialButton tweetButton;
-    private final String format = "#NowPlaying %s - %s";
+    private MainViewModel viewModel;
 
     private GooglePlayMusicBroadcastReceiver receiver = new GooglePlayMusicBroadcastReceiver() {
         @Override
         public void onTrackReceive(Context context, @NonNull Track track, String action) {
-            notifyTrackUpdated(track);
+            viewModel.updateTrack(track);
         }
     };
 
@@ -49,86 +28,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewId = findViewById(R.id.contentId);
-        textViewTrack = findViewById(R.id.contentTrack);
-        textViewArtist = findViewById(R.id.contentArtist);
-        textViewAlbum = findViewById(R.id.contentAlbum);
-        editText = findViewById(R.id.text);
-        addIdButton = findViewById(R.id.addIdButton);
-        addTrackButton = findViewById(R.id.addTrackButton);
-        addArtistButton = findViewById(R.id.addArtistButton);
-        addAlbumButton = findViewById(R.id.addAlbumButton);
-        addHyphenButton = findViewById(R.id.addHyphenButton);
-        addSlashButton = findViewById(R.id.addSlashButton);
-        addBracketButton = findViewById(R.id.addBracketButton);
-        copyButton = findViewById(R.id.copyButton);
-        tweetButton = findViewById(R.id.tweetButton);
-
-        copyButton.setOnClickListener(new View.OnClickListener() {
+        viewModel = obtainViewModel(this);
+        viewModel.copyToClipboard().observe(this, new Observer<String>() {
             @Override
-            public void onClick(View view) {
-                boolean result = copyToClipBoard(MainActivity.this, getContent());
-                notifyResult("Copy", result);
+            public void onChanged(String s) {
+                copyToClipboard(MainActivity.this, s);
             }
         });
-
-        tweetButton.setOnClickListener(new View.OnClickListener() {
+        viewModel.shareToTwitter().observe(this, new Observer<String>() {
             @Override
-            public void onClick(View view) {
-                shareToTwitter(getContent());
-            }
-        });
-
-        addIdButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused(textViewId.getText().toString());
-            }
-        });
-
-        addTrackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused(textViewTrack.getText().toString());
-            }
-        });
-
-        addArtistButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused(textViewArtist.getText().toString());
-            }
-        });
-
-        addAlbumButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused(textViewAlbum.getText().toString());
-            }
-        });
-
-        addHyphenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused(" - ");
-            }
-        });
-
-        addSlashButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused(" / ");
-            }
-        });
-
-        addBracketButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                insertTextIfFocused("()");
-                int pos = Math.max(editText.getSelectionStart(), 0);
-                if (pos != 0) {
-                    editText.setSelection(pos - 1);
-                }
+            public void onChanged(String s) {
+                shareToTwitter(s);
             }
         });
     }
@@ -145,21 +55,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
-    private void notifyTrackUpdated(@NonNull Track track) {
-        textViewId.setText(String.valueOf(track.id));
-        textViewTrack.setText(track.name);
-        textViewArtist.setText(track.artist);
-        textViewAlbum.setText(track.album);
-
-        String content = String.format(Locale.JAPAN, format, track.name, track.artist);
-        editText.setText(content);
-
-        if (editText.isFocused()) {
-            editText.setSelection(content.length());
-        }
-    }
-
-    private boolean copyToClipBoard(Context context, String text) {
+    private boolean copyToClipboard(Context context, String text) {
         if (context == null) {
             return false;
         }
@@ -181,31 +77,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private String getContent() {
-        return editText.getText().toString();
-    }
+    public static MainViewModel obtainViewModel(FragmentActivity activity) {
+        ViewModelProvider.AndroidViewModelFactory factory = ViewModelProvider.AndroidViewModelFactory.getInstance(activity.getApplication());
 
-    private void insertTextIfFocused(String text) {
-        if (!editText.isFocused()) {
-            return;
-        }
-        String str = editText.getText().toString();
-        int start = Math.max(editText.getSelectionStart(), 0);
-        int end = Math.max(editText.getSelectionEnd(), 0);
-        String str1 = str.substring(0, start);
-        String str2 = str.substring(end);
-
-        str = str1 + text + str2;
-        editText.setText(str);
-        editText.setSelection(str1.length() + text.length());
-    }
-
-    private void notifyResult(String content, boolean result) {
-        if (result) {
-            content += " is success.";
-        } else {
-            content += " is failure...";
-        }
-        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
+        return new ViewModelProvider(activity, factory).get(MainViewModel.class);
     }
 }

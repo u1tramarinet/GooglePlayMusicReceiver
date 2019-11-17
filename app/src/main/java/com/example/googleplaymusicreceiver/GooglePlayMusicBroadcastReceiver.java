@@ -37,7 +37,7 @@ public abstract class GooglePlayMusicBroadcastReceiver extends BroadcastReceiver
 
     private Track createTrackFromIntent(@NonNull Intent intent) {
         return new Track(
-                intent.getIntExtra(KEY_ID, -1),
+                intent.getIntExtra(KEY_ID, Track.INVALID_ID),
                 intent.getStringExtra(KEY_TRACK),
                 intent.getStringExtra(KEY_ARTIST),
                 intent.getStringExtra(KEY_ALBUM));
