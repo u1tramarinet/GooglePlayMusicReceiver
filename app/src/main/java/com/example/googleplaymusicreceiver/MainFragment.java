@@ -39,7 +39,7 @@ public class MainFragment extends Fragment {
     private MaterialButton tweetButton;
     private final String format = "#NowPlaying %s - %s";
 
-    MainViewModel viewModel;
+    private MainViewModel viewModel;
 
     public MainFragment() {
     }
