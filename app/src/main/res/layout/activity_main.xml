@@ -12,6 +12,7 @@
         android:id="@+id/fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.example.googleplaymusicreceiver.MainFragment" />
+        android:name="com.example.googleplaymusicreceiver.MainFragment"
+        tools:layout="@layout/fragment_main"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
